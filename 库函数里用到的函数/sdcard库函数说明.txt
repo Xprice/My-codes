@@ -1,0 +1,20 @@
+SD卡类库
+对SD卡中的文件进行操作，用 SD类
+对SD卡文件中的具体内容操作用 file类
+SD.begin(csPin) csPin为输出模式，连到SD卡使能端，返回 true/false
+SD.exists(filename) 判断某文件夹是否存在，返回true/false
+SD.open(filename,mode) 打开某文件，mode:FILE_READ/FILE_WRITE，返回true/false
+SD.remove(filename) 移除某文件夹，返回true/false
+SD.mkdir(filename)  创建某文件夹，返回true/false
+SD.rmdir(filename)  移除某空文件夹，返回true/false
+file.available()    检查并返回当前文件中可读的字节数
+file.close()     关闭某文件
+file.peek()     读取当前字节，但并不移动到下一字节
+file.position()   获取“光标”在当前文件中的位置
+file.print(date,FORMAT) 以某格式输出数据到文件
+file.seek(position) 将“光标”移到某一位置
+file.size()     获取文件大小
+file.read()     读取1B数据
+file.write(date/(buf,len))  写入数据到文件
+以上file为一个File 类对象
+定义一个File对象myFile,再用myFile = SD.open()打开文件,此文件就和myFile关联了
