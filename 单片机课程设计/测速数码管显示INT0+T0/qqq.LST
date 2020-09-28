@@ -1,0 +1,161 @@
+C51 COMPILER V9.54   QQQ                                                           11/29/2019 15:57:00 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE QQQ
+OBJECT MODULE PLACED IN qqq.OBJ
+COMPILER INVOKED BY: D:\Keil\3\C51\BIN\C51.EXE qqq.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PAGEWIDTH(112) 
+                    -TABS(2) PREPRINT
+
+line level    source
+
+   1          /*   sbit a0=P1^7; a1=P1^6;a2=P1^5;a3=P1^4;a4=P1^3;       BLANK=P1^2;//BLANK--C[10]     S0=P1^1;//
+             -decade    S1=P1^0;//unit   */
+   2          
+   3          
+   4          
+   5          #include "reg51.h"     //P0 is the order number of NIXIE LIGHT     P1 is the HEX code of NIXIE LIG
+             -HT 
+   6          unsigned char f,x;
+   7          int UNIT,DECADE,v,t;
+   8          unsigned char code C[]={0X3F,0X06,0X5B,0X4F,0X66,0X6D,0X7D,0X07,0X7F,0X6F,0X40};//HEX code for 0-9
+             - 
+   9          //unsigned char code C2[]={0XBF,0X86,0XDB,0XCF,0XE6,0XED,0XFD,0X87,0XFF,0XEF};//HEX code with radi
+             -x point for 0-9 
+  10          void delay(int i)       //[i]ms
+  11          {
+  12   1        int q;
+  13   1        for(q=0;q<i;q++)
+  14   1        {
+  15   2          unsigned char a,b;   //1ms
+  16   2          for(b=71;b>0;b--)
+  17   2              for(a=2;a>0;a--);
+  18   2        }
+  19   1      }
+  20          void delay500us()   
+  21          {
+  22   1          unsigned char a,b;
+  23   1          for(b=19;b>0;b--)
+  24   1              for(a=5;a>0;a--);
+  25   1      }
+  26          void NiXie_light(int num)//'num' --- Student ID
+  27          {
+  28   1        unsigned char i;
+  29   1        for(i=0;i<8;i++)
+  30   1        {
+  31   2          switch(i)
+  32   2          {
+  33   3            case 0: P1=0X7F;
+  34   3                    P0=C[3];
+  35   3                    delay500us();
+  36   3                    P0=0X00;
+  37   3            break;
+  38   3            case 1: P1=0XBF;
+  39   3                    P0=C[4];
+  40   3                    delay500us();
+  41   3                    P0=0X00;
+  42   3            break;
+  43   3            
+  44   3            case 2: P1=0XDF;
+  45   3                    P0=C[1];
+  46   3                    delay500us();
+  47   3                    P0=0X00;
+  48   3            break;
+  49   3            case 3: P1=0XEF;
+  50   3                    P0=C[1];
+C51 COMPILER V9.54   QQQ                                                           11/29/2019 15:57:00 PAGE 2   
+
+  51   3                    delay500us();
+  52   3                    P0=0X00;
+  53   3            break;
+  54   3            case 4: P1=0XF7;
+  55   3                    P0=C[num];
+  56   3                    delay500us();
+  57   3                    P0=0X00;
+  58   3            break;
+  59   3            case 5: P1=0XFB;
+  60   3                    P0=C[10];
+  61   3                    delay500us();
+  62   3                    P0=0X00;
+  63   3            break;
+  64   3            case 6: P1=0XFD;
+  65   3                    P0=C[DECADE];
+  66   3                    delay500us();
+  67   3                    P0=0X00;
+  68   3            break;
+  69   3            case 7: P1=0XFE;
+  70   3                    P0=C[UNIT];
+  71   3                    delay500us();
+  72   3                    P0=0X00;
+  73   3            break;
+  74   3          }
+  75   2        }
+  76   1      }
+  77          void InitTimer0(void)//T0's initialization 
+  78          {
+  79   1          TMOD = 0x01;
+  80   1          TH0 = 0x0FE;
+  81   1          TL0 = 0x0C;
+  82   1          EA = 1;
+  83   1          ET0 = 1;
+  84   1          TR0 = 1;
+  85   1      }
+  86          void InitINT0()//INT0's initialization 
+  87          {
+  88   1        IT0=1;
+  89   1        EX0=1;
+  90   1        EA=1;
+  91   1      }
+  92          void INT0Interrupt()  interrupt 0
+  93          {
+  94   1        EX0=0;
+  95   1        f++;
+  96   1        x++;
+  97   1        if(f==7)
+  98   1        {
+  99   2          TR0=0;
+ 100   2          v=3500/t;
+ 101   2          t=0;
+ 102   2          f=0;
+ 103   2          ET0=1;
+ 104   2          TR0=1;
+ 105   2        }
+ 106   1        EX0=1;
+ 107   1      }
+ 108          void Timer0Interrupt(void) interrupt 1    //1MS
+ 109          {
+ 110   1          TH0 = 0x0FE;
+ 111   1          TL0 = 0x0C;
+ 112   1          t++;
+C51 COMPILER V9.54   QQQ                                                           11/29/2019 15:57:00 PAGE 3   
+
+ 113   1      }
+ 114          void cout()
+ 115          {
+ 116   1        if(x==40){x=0;}
+ 117   1        UNIT=(v%10);
+ 118   1        DECADE=(v/10);
+ 119   1      }
+ 120          void main()
+ 121          {
+ 122   1        InitINT0();
+ 123   1        InitTimer0();
+ 124   1        while(1)
+ 125   1        {
+ 126   2          if(x<20){cout();NiXie_light(1);}//Change student number every 10 laps
+ 127   2          if(x>20){cout();NiXie_light(7);}
+ 128   2        }   
+ 129   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    400    ----
+   CONSTANT SIZE    =     11    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     10       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
