@@ -1,0 +1,54 @@
+C51 COMPILER V9.54   BASE_LIB                                                              10/16/2020 22:23:07 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE BASE_LIB
+OBJECT MODULE PLACED IN .\Objects\Base_lib.obj
+COMPILER INVOKED BY: D:\Keil\3\C51\BIN\C51.EXE ..\HARDWARE\BASE\Base_lib.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\HARDWARE\B
+                    -ASE;..\HARDWARE\DELAYMS;..\HARDWARE\DS18B20;..\HARDWARE\IIC;..\HARDWARE\SMG;..\HARDWARE\TINIT;..\HARDWARE\KEYPAD) DEBUG 
+                    -OBJECTEXTEND PRINT(.\Listings\Base_lib.lst) TABS(2) OBJECT(.\Objects\Base_lib.obj)
+
+line level    source
+
+   1          /*************上电初始化*************/
+   2          #include "Base_lib.h"
+   3          
+   4          void select(uchar num)
+   5          {
+   6   1        switch (num)
+   7   1        {
+   8   2            case 4: P2 = (P2 & 0x1f) | 0x80; break;//led
+   9   2            case 5: P2 = (P2 & 0x1f) | 0xa0; break;//buzz
+  10   2            case 6: P2 = (P2 & 0x1f) | 0xc0; break;//SMG（Y6C位选）
+  11   2            case 7: P2 = (P2 & 0x1f) | 0xe0; break;//SMG（Y7C段选）
+  12   2            default: P2 &= 0x1f; break;            //锁存
+  13   2        }
+  14   1      }
+  15          void init()
+  16          {
+  17   1        // 关闭蜂鸣器、LED灯、数码管
+  18   1        select(4);  // 选择LED灯
+  19   1        P0 = 0xff;  //关闭led
+  20   1        select(5);  // 选择蜂鸣器
+  21   1        P0 = 0x00;   //关闭buzz
+  22   1        select(6);  // Y6C（位选）  选中全部数码管
+  23   1        P0 = 0xff;  
+  24   1        select(7);  // Y7C（段码） 关闭数码管
+  25   1        P0 = 0xff;
+  26   1        
+  27   1        select(0);  // 锁存
+  28   1      }
+  29          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

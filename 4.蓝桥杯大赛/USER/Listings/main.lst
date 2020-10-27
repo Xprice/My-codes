@@ -1,0 +1,120 @@
+C51 COMPILER V9.54   MAIN                                                                  10/16/2020 22:23:07 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil\3\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\HARDWARE\BASE;..\HARDWARE\DELAY
+                    -MS;..\HARDWARE\DS18B20;..\HARDWARE\IIC;..\HARDWARE\SMG;..\HARDWARE\TINIT;..\HARDWARE\KEYPAD) DEBUG OBJECTEXTEND PRINT(.\
+                    -Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <stc15f2k60s2.h>
+   2          #include <ds18b20.h>
+   3          #include <Base_lib.h>
+   4          #include <Delayms_lib.h>
+   5          #include <smg_lib.h>
+   6          #include <Tinit_lib.h>
+   7          #include <Keypad_lib.h>
+   8          #include <stdio.h>
+   9          
+  10            
+  11          #define uchar unsigned char
+  12          #define uint unsigned int 
+  13          
+  14          
+  15          unsigned char rd_temp(void);
+  16          void Timer0Init(void);
+  17          void init();
+  18          
+  19          
+  20          void buzz();
+  21          void stunumSHOW();
+  22          void temSHOW();
+  23          uchar keyScan();
+  24          
+  25          void swkey(void);
+  26          
+  27          uchar T,cout;
+  28          
+  29          void main()
+  30          {
+  31   1        init();
+  32   1        //Timer0Init();
+  33   1        while(1)
+  34   1          {
+  35   2            //temSHOW();
+  36   2            //stunumSHOW();
+  37   2            swkey();
+  38   2          }
+  39   1        
+  40   1      }
+  41          
+  42          void swkey()
+  43          {
+  44   1        uchar key = keyScan();
+  45   1        
+  46   1        if(key!=0)
+  47   1        {
+  48   2          buzz();
+  49   2          shumaguan(0, key);
+  50   2        }   
+  51   1      }
+  52          void stunumSHOW()
+  53          { 
+C51 COMPILER V9.54   MAIN                                                                  10/16/2020 22:23:07 PAGE 2   
+
+  54   1            shumaguan(7, 1);      
+  55   1            shumaguan(6, 9);    
+  56   1            shumaguan(5, 0);    
+  57   1            shumaguan(4, 3);    
+  58   1            shumaguan(3, 4);    
+  59   1            shumaguan(2, 1);      
+  60   1            shumaguan(1, 1);    
+  61   1            shumaguan(0, 7);
+  62   1      }
+  63          
+  64          void temSHOW()
+  65          { 
+  66   1        uchar ge,shi;
+  67   1        if(cout==1000)
+  68   1        {
+  69   2          T = rd_temp();
+  70   2          cout=0;
+  71   2        }
+  72   1        
+  73   1        shi= T/10;
+  74   1        ge= T%10;
+  75   1        
+  76   1        shumaguan(7, shi);
+  77   1        
+  78   1        shumaguan(6, ge);
+  79   1      }
+  80          //void T0Interrupt()  interrupt 1     //
+  81          //{
+  82          //  TH0 = 0x0D1;
+  83          //  TL0 = 0x20;
+  84          //  //add your code here!
+  85          //  cout++;
+  86          //}
+  87          void buzz()
+  88          {
+  89   1        select(5);
+  90   1        P0 = 0xff;//Ïì
+  91   1        delayms(200);
+  92   1        P0 = 0x00;
+  93   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    149    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

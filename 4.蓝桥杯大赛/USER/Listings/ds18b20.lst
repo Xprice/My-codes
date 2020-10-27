@@ -1,0 +1,139 @@
+C51 COMPILER V9.54   DS18B20                                                               10/16/2020 22:23:07 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE DS18B20
+OBJECT MODULE PLACED IN .\Objects\ds18b20.obj
+COMPILER INVOKED BY: D:\Keil\3\C51\BIN\C51.EXE ..\HARDWARE\DS18B20\ds18b20.c OPTIMIZE(8,SPEED) BROWSE INCDIR(..\HARDWARE
+                    -\BASE;..\HARDWARE\DELAYMS;..\HARDWARE\DS18B20;..\HARDWARE\IIC;..\HARDWARE\SMG;..\HARDWARE\TINIT;..\HARDWARE\KEYPAD) DEBU
+                    -G OBJECTEXTEND PRINT(.\Listings\ds18b20.lst) TABS(2) OBJECT(.\Objects\ds18b20.obj)
+
+line level    source
+
+   1          #include "ds18b20.h"
+   2          
+   3          //延时函数
+   4          void DSdelay(unsigned int t)
+   5          {
+   6   1        uchar i;
+   7   1        while(t--)
+   8   1        for(i=0;i<12;i++);
+   9   1      }
+  10          
+  11          //DS18B20初始化函数
+  12          bit init_ds18b20(void)
+  13          {
+  14   1        bit initflag = 0;
+  15   1        DQ = 1;
+  16   1        DSdelay(12);
+  17   1        DQ = 0;
+  18   1        DSdelay(80); // 延时大于480us
+  19   1        DQ = 1;
+  20   1        DSdelay(10);  // 14
+  21   1        initflag = DQ;     // initflag等于1初始化失败
+  22   1        DSdelay(5);
+  23   1        
+  24   1        return initflag;
+  25   1      }
+  26          
+  27          //通过单总线向从器件写一个字节
+  28          void wr_ds18b20(unsigned char byt)
+  29          {
+  30   1        unsigned char i;
+  31   1        for(i=0;i<8;i++)
+  32   1        {
+  33   2          DQ = 0;
+  34   2          DQ = byt&0x01;
+  35   2          DSdelay(5);
+  36   2          DQ = 1;
+  37   2          byt >>= 1;
+  38   2        }
+  39   1        DSdelay(5);
+  40   1      }
+  41          
+  42          //通过单总线从从器件读一个字节
+  43          unsigned char rd_ds18b20(void)
+  44          {
+  45   1        unsigned char i;
+  46   1        unsigned char byt;
+  47   1        
+  48   1        for(i=0;i<8;i++)
+  49   1        {
+  50   2          DQ = 0;
+  51   2          byt >>= 1;
+  52   2          DQ = 1;
+  53   2          if(DQ)
+C51 COMPILER V9.54   DS18B20                                                               10/16/2020 22:23:07 PAGE 2   
+
+  54   2          {
+  55   3            byt |= 0x80;
+  56   3          }    
+  57   2          DSdelay(5);
+  58   2        }
+  59   1        return byt;
+  60   1      }
+  61          
+  62          //温度转换、读取及数据处理器函数
+  63          float rd_temperature(void)
+  64          {
+  65   1        unsigned int temp;
+  66   1        unsigned char low,high;
+  67   1        float tempreturn;
+  68   1        
+  69   1        init_ds18b20();
+  70   1        wr_ds18b20(0xCC);
+  71   1        wr_ds18b20(0x44); //启动温度转换
+  72   1        DSdelay(200);
+  73   1      
+  74   1        init_ds18b20();
+  75   1        wr_ds18b20(0xCC);
+  76   1        wr_ds18b20(0xBE); //读取寄存器
+  77   1        
+  78   1        low = rd_ds18b20(); //低字节
+  79   1        high = rd_ds18b20(); //高字节
+  80   1        
+  81   1        temp = high<<4;
+  82   1        temp |= (low>>4);
+  83   1        
+  84   1        tempreturn = temp*0.0625;
+  85   1        return tempreturn;
+  86   1      }
+  87          
+  88          //温度转换、读取及数据处理器函数
+  89          unsigned char rd_temp(void)
+  90          {
+  91   1        unsigned char low,high;
+  92   1        char temp;
+  93   1        
+  94   1        init_ds18b20();
+  95   1        wr_ds18b20(0xCC);
+  96   1        wr_ds18b20(0x44); //??????
+  97   1        DSdelay(200);
+  98   1      
+  99   1        init_ds18b20();
+ 100   1        wr_ds18b20(0xCC);
+ 101   1        wr_ds18b20(0xBE); //?????
+ 102   1        
+ 103   1        low = rd_ds18b20(); //???
+ 104   1        high = rd_ds18b20(); //???
+ 105   1        
+ 106   1        temp = high<<4;
+ 107   1        temp |= (low>>4);
+ 108   1        
+ 109   1        return temp;
+ 110   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    216    ----
+   CONSTANT SIZE    =   ----    ----
+C51 COMPILER V9.54   DS18B20                                                               10/16/2020 22:23:07 PAGE 3   
+
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

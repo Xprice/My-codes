@@ -1,0 +1,10 @@
+".\Objects\main.obj",
+".\Objects\ds18b20.obj",
+".\Objects\Base_lib.obj",
+".\Objects\Delayms_lib.obj",
+".\Objects\iic.obj",
+".\Objects\smg_lib.obj",
+".\Objects\Tinit_lib.obj",
+".\Objects\Keypad_lib.obj" 
+TO ".\Objects\MOD" 
+PRINT(".\Listings\MOD.m51") RAMSIZE(256) 
