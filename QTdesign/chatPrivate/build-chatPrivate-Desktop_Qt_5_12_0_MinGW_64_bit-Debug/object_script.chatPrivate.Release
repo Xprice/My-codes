@@ -1,0 +1,10 @@
+release/main.o
+release/widget.o
+release/tcpserver.o
+release/tcpclient.o
+release/chat.o
+release/qrc_images.o
+release/moc_widget.o
+release/moc_tcpserver.o
+release/moc_tcpclient.o
+release/moc_chat.o
